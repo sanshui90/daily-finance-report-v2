@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金融行业 Top10 热点动态</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        .header .date {
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 50px 40px;
+        }
+        
+        .hot-item {
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 6px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hot-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border-left-color: #764ba2;
+        }
+        
+        .item-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .rank {
+            min-width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-right: 20px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            flex-shrink: 0;
+        }
+        
+        .item-title-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .item-title {
+            flex: 1;
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.4;
+            padding-right: 15px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.5em;
+            color: #667eea;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .hot-item.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .item-body {
+            margin-top: 25px;
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 1;
+        }
+        
+        .hot-item.collapsed .item-body {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+        
+        .item-desc {
+            color: #5a6c7d;
+            line-height: 2;
+            font-size: 1.05em;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border-left: 4px solid #e8f0fe;
+        }
+        
+        /* 热点简介分段样式 */
+        .item-desc .point {
+            display: block;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .item-desc .point:last-child {
+            margin-bottom: 0;
+        }
+        
+        .item-desc .point::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        /* 关键词高亮 */
+        .item-desc .highlight {
+            color: #667eea;
+            font-weight: 600;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .item-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 2px solid #f0f2f5;
+        }
+        
+        .item-meta {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 100%);
+            color: #1e3c72;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .source-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            color: white;
+        }
+        
+        .expand-hint {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 0.9em;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            color: #7f8c8d;
+            font-size: 1em;
+            border-top: 2px solid #f0f2f5;
+        }
+        
+        .update-time {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .item-header {
+                flex-wrap: wrap;
+            }
+            
+            .rank {
+                margin-bottom: 0;
+            }
+            
+            .item-title {
+                font-size: 1.2em;
+            }
+            
+            .hot-item {
+                padding: 25px;
+            }
+            
+            .item-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 金融行业 Top10 热点动态</h1>
+            <div class="date">2026年04月04日</div>
+        </div>
+        
+        <div class="content">
+            
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">1</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">2026年04月04日一般经济指标数据_一般经济数据公布-财经日历-金投网</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point"></span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="https://calendar.cngold.org/index/0_1_20260404.htm" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">2</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">全球及中国财经要闻综述(2026.04.03) </div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">一、中东局势与能源市场震荡,全球通胀与关税风险升温 特朗普表态对伊战事或持续,霍尔木兹海峡通行协议推进但避险未消,国际油价大幅冲高,美油涨幅近<span class="highlight">12%</span>。</span>
+<span class="point">俄遭打击致原油出口能力下降约100万桶/日,IEA上调2026年全球原油需求增速预期,能源供应偏紧格局延续。</span>
+<span class="point">美国宣布对钢铝铜衍生品征收<span class="highlight">25%</span>关税、对专利药品征收<span class="highlight">100%</span>关税,全球贸易与制造业成本压力上升。</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="https://caifuhao.eastmoney.com/news/20260403085558508553130" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">3</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">新华金融_新华网</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">中国银联发布智能体支付开放协议框架 构建开放、可控、安全、信任的智能支付新生态 “正在稳规模”与“变相往下走”:中小银行理财整改大限前的分岔路口 中小银行开启新一轮存款挂牌利率调整 券商2025年报净利全线回暖 大中小机构分层突围 央行、科技部、金融监管总局、证监会联合召开科技金融交流推进会 多方协同推动金融资源更加精准投向科创领域 投顾收费引发关注 规范流程与模式创新并行 精读财报|农业银行:净利增速领跑同业 财富管理表现亮眼 以亮眼业绩领跑 中国中信金融资产2025年盈利超百亿元 央行一季度例会:加大逆周期和跨周期调节力度 3月PMI重返扩张区间 经济景气水平回升 金融支农践初心 春耕护航显担当 中国人寿财险以全链条农险服务护航2026年春耕 筑牢“十五五”开局农业保障根基 中国中信金融资产:三年质效跃升 五年剑指标杆 六大行营收净利全部双增 2025年度分红合计将超<span class="highlight">4000亿元</span> 千亿耐心资本加速入局 银行系AIC扩至9家 金融活水润南粤 中华保险护春耕——中华财险广东分公司护航2026年春耕备耕 新华保险2025年度业绩发布会 2025年我国国际收支基本平衡 外汇储备总体稳定 无形资产“换”贷款 多方搭台推动信贷投放巧发力 精读财报丨寿险头雁的“韧”与“进” 中国人寿2025年交出“满堂红”答卷 价值中国|中国平安马明哲:“平安服务年”将围绕三大价值方向发力 中国银联博鳌发声 以多元实践助力跨境支付体系建设 中小银行纷纷清理“沉睡账户” 或将成常态化机制 织密民生保障网 长护险全面推开 内地-香港数字人民币跨境试点快速推进 平安银行2025年业绩透视:业绩下滑背后的隐忧与挑战 农业保险系牢乡村产业“安全带” 两办部署加快建立长期护理保险制度 平安人寿举办首届新锐保险康养顾问盛典 推出IWA品牌标识 年内7家险企计划发行债券规模超<span class="highlight">160亿元</span> 保险业如何应对极端风险 平安人寿推出司庆金越系列分红险产品 “约定利益+分红机会”助力客户财富成长 北交所IPO审核增速提质 上会企业“含金量”受认可 做强绿色金融支持民营企业低碳发展 精读财报|平安银行:营收净利“双降” 边际改善信号初显 精读财报|平安银行:数字化加速穿透 增效降本做减法 精读财报|平安银行:资产质量整体稳健 风险改善趋势有待确认 中国人民银行行长潘功胜:加大金融支持中国经济结构转型力度 银行信用卡春招密集启动 金融科技人才成“香饽饽” 货币政策适度宽松 结构性政策工具优化完善 前2个月财政收入小幅增长 重点领域支出持续发力。</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="https://www.xinhuanet.com/money/index.html" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">4</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">新华金融_新华网</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">中国银联发布智能体支付开放协议框架 构建开放、可控、安全、信任的智能支付新生态 2026-04-03 “正在稳规模”与“变相往下走”:中小银行理财整改大限前的分岔路口 2026-04-03 中小银行开启新一轮存款挂牌利率调整 2026-04-03 券商2025年报净利全线回暖 大中小机构分层突围 2026-04-02 央行、科技部、金融监管总局、证监会联合召开科技金融交流推进会 多方协同推动金融资源更加精准投向科创领域 2026-04-02 投顾收费引发关注 规范流程与模式创新并行 2026-04-02 精读财报|农业银行:净利增速领跑同业 财富管理表现亮眼 2026-04-01 以亮眼业绩领跑 中国中信金融资产2025年盈利超百亿元 2026-04-01 央行一季度例会:加大逆周期和跨周期调节力度 2026-04-01 3月PMI重返扩张区间 经济景气水平回升 2026-04-01 金融支农践初心 春耕护航显担当 中国人寿财险以全链条农险服务护航2026年春耕 筑牢“十五五”开局农业保障根基 2026-03-31 中国中信金融资产:三年质效跃升 五年剑指标杆 2026-03-31 六大行营收净利全部双增 2025年度分红合计将超<span class="highlight">4000亿元</span> 2026-03-31 千亿耐心资本加速入局 银行系AIC扩至9家 2026-03-31 金融活水润南粤 中华保险护春耕——中华财险广东分公司护航2026年春耕备耕 2026-03-30。</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="http://www.xinhuanet.com/money/jrlb/" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">5</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">财经中心_中国网</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">2026年04月04日 星期六 -134.03|-0.99% -38.13|-0.85% 38.23|0.18% 660.17|1.26% -0.0033|-0.29%</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="http://my.finance.china.com.cn/" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">6</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">新闻</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">中国人民银行召开2026年会计财务工作会议 2026-04-02 中国人民银行新增12家数字人民币业务运营机构 2026-04-02 中国人民银行行长潘功胜会见澳门金融管理局行政管理委员会主席黄善文</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="https://www.pbc.gov.cn/goutongjiaoliu/113456/113469/index.html" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">7</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">要闻速递_新华金融_新华网</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">央行、科技部、金融监管总局、证监会联合召开科技金融交流推进会 多方协同推动金融资源更加精准投向科创领域 2026-04-02 交通银行穿越周期的破局之道:向稳、向进、向智 2026-03-31 透视五大险企年报:权益投资怎样做加法 2026-04-01 解决“小账”抬头问题 银保渠道“报行合一”迎强监管 2026-03-31 破解“一人失能,全家失衡” 险企竞逐银发经济新蓝海 2026-03-30 友邦保险2025:锚定亚洲“确定性” 以长期主义深耕中国市场 2026-03-26 多家银行理财子公司致信投资者:市场短期波动不改变长期价值 2026-03-26 银行理财:黄金价格“失稳” 净值波动考验运作能力 2026-03-25 行业转型尚处关键期 多家中小信托公司挂牌转让部分股权 2026-03-24 经营发展质效兼备 特色优势日益彰显——交通银行发布2025年度业绩 2026-03-28 不良资产包密集上架 银行业市场出清再提速 个人消费贷、经营贷成核心品类 2026-03-23 个贷息费杜绝“糊涂账” 贷款机构密集部署业务调整 2026-03-20 最新基金代销百强榜出炉 头部机构强者恒强 2026-03-19 建行普惠金融:融资助经营 贴息减压力 2026-03-19 建行惠懂你:明天“惠”更好 2026-03-18。</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="http://www.xinhuanet.com/money/yw/" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">8</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">财经日历:4月重要事件一览</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">4月1日  l光伏等产品增值税出口退税取消 l三菱瓦斯化学上调电子材料核心产品(覆铜板、预浸料及背胶铜箔)价格<span class="highlight">30%</span> l全球最大MLCC供应商村田对AI服务器和高端车规级MLCC产品全面涨价 4月3日 l港股休市一日,南、北向交易关闭;美股休市一日 l公布美国3月失业率、非农就业人口数据 4月5日  l春秋航空国内航线燃油附加费4月5日起上涨 4月6日  lA股、港股休市一日,南、北向交易关闭 4月7日  l港股休市一日,南、北向交易关闭 l证监会《关于短线交易监管的若干规定》施行 l国内成品油开启新一轮调价窗口 4月8日  lEIA公布月度短期能源展望报告 4月9日  l美联储公布货币政策会议纪要 l举办2026第三届AI算力产业大会暨展览会、2026第十四届深圳国际半导体产业及应用展览会 l中欧合作“微笑卫星”计划发射 4月10日  l公布中国3月CPI、PPI数据 4月13日  l欧佩克公布月度原油市场报告 l举办2026年春季电子产品展、2026年世界互联网大会亚太峰会 l香港邮政上调主要邮费 l举办2026钙钛矿电池技术与应用交流会 l第六届消博会举办 4月14日  l公布美国3月PPI数据 lIEA公布月度原油市场报告 4月15日 l第139届广交会开幕 4月16日  l国新办举行国民经济运行情况新闻发布会 l国家统计局公布70个大中城市住宅销售价格月度报告 l举办第十六届北京国际电影节、2026第三届数据要素创新发展大会、第四届数据中心液冷技术大会 4月17日  l举办2026中国人形机器人生态大会 4月19日  l举办2026北京亦庄半程马拉松暨人形机器人半程马拉松 4月20日  l公布中国4月一年期、五年期LPR数据 4月21日  l国内成品油开启新一轮调价窗口 l举办第十四届中国数控机床展览会、2026全球6G技术与产业生态大会 4月22日  l举办2026(第五届)半导体生态创新大会 4月28日  l日本央行公布利率决议和经济前景展望报告 4月29日  l举办第九届数字中国建设峰会 4月30日  l公布中国4月PMI数据 l美联储FOMC公布利率决议,美联储主席鲍威尔召开货币政策新闻发布会 l欧洲央行、英国央行公布利率决议 l年报和一季报披露截止日。</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="https://baijiahao.baidu.com/s?id=1861177305650032963&wfr=spider&for=pc" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">9</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">热点新闻</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">1、中央政治局委员、中央农村工作领导小组副组长马兴瑞涉嫌严重违纪违法,目前正接受中央纪委国家监委纪律审查和监察调查。(新华社)</span>
+<span class="point">2、记者今天了解到,市场监管总局近日在北京召开 ... 外卖新规即将施行 3家平台企业接受行政指导04月03日 21:50记者4月3日从国家市场监督管理总局了解到,市场监管总局日前在北京召开外卖平台企业行政指导会,指导美团、淘宝闪购、京东3家平台企业严格落实即将实施的《网络餐饮服务经营者落实食品安全 ... A股每日行情复盘(4月3日)04月03日 15:30周五(4月3日),上证指数收跌1.00%报3880.10点;深圳成指收跌0.99%报13352.90点;创业板指收跌0.73%报3149.60点;沪深300收跌0.85%报4440.79点;科创50收跌0.47%报1256.21点;上证50 ... A股市场破净股一览(4月3日):319只个股股价跌破每股净资产04月03日 15:304月3日,A股共有319只个股股价跌破每股净资产。其中金地集团、民生银行、金融街市净率最低,分别为0.</span>
+<span class="point">214、0.</span>
+<span class="point">289、0.312倍。 ... 塑料期货主力合约涨超2%,一看涨期权合约暴涨100.0%04月03日 14:28塑料期货主力合约盘中涨超2%,原木2605购875期权合约暴涨100.00%,从昨收价1.5涨至3;原木2607购850期权合约大涨50.00%,从昨收价11涨至16.5;原木2605购825期权合约涨35.85%,从昨收价13.2 ... 社保基金去年四季度持有科创板股名单(附股)04月03日 14:00财报季,社保基金持股动向曝光!去年年末社保基金共现身13只个股前十大流通股东榜,新进3只,增持4只。 证券时报统计显示,社保基金最新出现在13只科创板股前十大流通股东名单中,合计持股 ... 科创板块今日跌幅居前,科创医药ETF(588130)跌超2%04月03日 09:39科创板块今日表现低迷,科创医药ETF(588130)跌超2%,成交额92.14万元,较昨日此时放量136.84%。 ... A股股票回购一览(4月3日):14家公司披露回购进展04月03日 07:20iFinD数据显示,4月3日,14家公司发布股票回购相关进展。其中,6家公司披露回购实施进展,8家公司披露回购完成。从回购实施进展来看,海尔智家回购金额最高,已回购3.34亿元。从回购完成来 ... 同花顺金融早报(4月3日)04月03日 07:05精选全球要闻,传递投资机会,听众朋友们早上好,欢迎收听同花顺金融早报。【宏观经济新闻】</span>
+<span class="point">1、4月2日,外交部发言人毛宁主持例行记者会。,有报道称,伊朗已向中国寻求安全 ... 同花顺财经早餐4月3日(机构版)04月03日 05:53【头条】</span>
+<span class="point">1、4月2日,外交部发言人毛宁主持例行记者会。有外媒记者提问有外媒记</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="http://news.10jqka.com.cn/hotnews_list/" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hot-item">
+                <div class="item-header">
+                    <div class="rank">10</div>
+                    <div class="item-title-wrapper">
+                        <div class="item-title">「财富在线」财经日历:4月重要事件一览</div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-desc">
+                        <span class="point">4月1日  l光伏等产品增值税出口退税取消 l三菱瓦斯化学上调电子材料核心产品(覆铜板、预浸料及背胶铜箔)价格<span class="highlight">30%</span> l全球最大MLCC供应商村田对AI服务器和高端车规级MLCC产品全面涨价 4月3日 l港股休市一日,南、北向交易关闭;美股休市一日 l公布美国3月失业率、非农就业人口数据 4月5日  l春秋航空国内航线燃油附加费4月5日起上涨 4月6日  lA股、港股休市一日,南、北向交易关闭 4月7日  l港股休市一日,南、北向交易关闭 l证监会《关于短线交易监管的若干规定》施行 l国内成品油开启新一轮调价窗口 4月8日  lEIA公布月度短期能源展望报告 4月9日  l美联储公布货币政策会议纪要 l举办2026第三届AI算力产业大会暨展览会、2026第十四届深圳国际半导体产业及应用展览会 l中欧合作“微笑卫星”计划发射 4月10日  l公布中国3月CPI、PPI数据 4月13日  l欧佩克公布月度原油市场报告 l举办2026年春季电子产品展、2026年世界互联网大会亚太峰会 l香港邮政上调主要邮费 l举办2026钙钛矿电池技术与应用交流会 l第六届消博会举办 4月14日  l公布美国3月PPI数据 lIEA公布月度原油市场报告 4月15日 l第139届广交会开幕 4月16日  l国新办举行国民经济运行情况新闻发布会 l国家统计局公布70个大中城市住宅销售价格月度报告 l举办第十六届北京国际电影节、2026第三届数据要素创新发展大会、第四届数据中心液冷技术大会 4月17日  l举办2026中国人形机器人生态大会 4月19日  l举办2026北京亦庄半程马拉松暨人形机器人半程马拉松 4月20日  l公布中国4月一年期、五年期LPR数据 4月21日  l国内成品油开启新一轮调价窗口 l举办第十四届中国数控机床展览会、2026全球6G技术与产业生态大会 4月22日  l举办2026(第五届)半导体生态创新大会 4月28日  l日本央行公布利率决议和经济前景展望报告 4月29日  l举办第九届数字中国建设峰会 4月30日  l公布中国4月PMI数据 l美联储FOMC公布利率决议,美联储主席鲍威尔召开货币政策新闻发布会 l欧洲央行、英国央行公布利率决议 l年报和一季报披露截止日。</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-meta">
+                            <span class="tag">金融热点</span>
+                        </div>
+                        <a href="https://baijiahao.baidu.com/s?id=1861192196545270273&wfr=spider&for=pc" target="_blank" rel="noopener noreferrer" class="source-link">
+                            查看详情 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="expand-hint">
+                💡 点击标题可展开/收起详细内容
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>自动生成报告 | <span class="update-time">更新时间：2026-04-04 09:00:32</span></p>
+            <p style="margin-top: 10px; opacity: 0.8;">数据来源：全球主流财经媒体 | AI 智能筛选与整理</p>
+        </div>
+    </div>
+    
+    <script>
+        // 展开/收起功能
+        document.querySelectorAll('.item-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const item = this.closest('.hot-item');
+                item.classList.toggle('collapsed');
+            });
+        });
+    </script>
+</body>
+</html>
